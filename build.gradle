@@ -1,0 +1,35 @@
+buildscript {
+    // Versions used across modules
+    ext.versions = [:]
+    ext.versions.with {
+        kotlin = '1.1.51'
+        junit = '4.12'
+        mapbox = '2.2.6'
+    }
+
+    repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+    }
+}
+
+allprojects {
+    group 'org.jraf'
+    version '1.0.0'
+
+    repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.3'
+    distributionType = Wrapper.DistributionType.ALL
+}

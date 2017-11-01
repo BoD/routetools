@@ -1,0 +1,3 @@
+rootProject.name = 'routetools'
+include ':routetools-lib'
+include ':routetools-cli'
