@@ -2,8 +2,6 @@ package org.jraf.routetools.lib.tools
 
 import com.mapbox.services.api.utils.turf.TurfConstants
 import com.mapbox.services.api.utils.turf.TurfMeasurement
-import com.mapbox.services.api.utils.turf.TurfMeasurement.bearing
-import com.mapbox.services.api.utils.turf.TurfMeasurement.destination
 import com.mapbox.services.commons.models.Position
 import org.jraf.routetools.lib.model.Speed
 
@@ -36,13 +34,13 @@ object RouteUtil {
 
 
     private fun divide(from: Position, to: Position, numberOfPositions: Int): List<Position> {
-        val heading = bearing(from, to)
+        val heading = TurfMeasurement.bearing(from, to)
         val res = mutableListOf<Position>()
 
         var point: Position = from
         for (i in numberOfPositions downTo 0) {
             val dist = TurfMeasurement.distance(point, to, TurfConstants.UNIT_METERS)
-            point = destination(point, dist / (i + 1), heading, TurfConstants.UNIT_METERS)
+            point = TurfMeasurement.destination(point, dist / (i + 1), heading, TurfConstants.UNIT_METERS)
             res += point
         }
         return res
