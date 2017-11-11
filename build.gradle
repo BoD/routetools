@@ -5,6 +5,7 @@ buildscript {
         kotlin = '1.1.51'
         junit = '4.12'
         mapbox = '2.2.6'
+        jcommander = '1.71'
     }
 
     repositories {
