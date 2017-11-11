@@ -16,10 +16,15 @@ class Main {
         @JvmStatic
         fun main(av: Array<String>) {
             val arguments = Arguments()
-            JCommander.newBuilder()
+            val jCommander = JCommander.newBuilder()
                     .addObject(arguments)
                     .build()
-                    .parse(*av)
+            jCommander.parse(*av)
+
+            if (arguments.help) {
+                jCommander.usage()
+                return
+            }
 
             val polylineStr = arguments.polyline
             val lineString = try {
@@ -32,7 +37,7 @@ class Main {
             val interpolatedPositions = RouteUtil.interpolate(positions, speed, 1)
             val noisePositions = RouteUtil.addNoise(interpolatedPositions)
 
-            val formatted = FormatUtil.format(noisePositions, FormatUtil.Format.valueOf(arguments.format.toUpperCase()))
+            val formatted = FormatUtil.format(noisePositions, arguments.format)
             if (arguments.outputFile != null) {
                 arguments.outputFile?.writeText(formatted)
             } else {

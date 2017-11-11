@@ -8,8 +8,11 @@ import java.io.File
 
 
 class Arguments {
-    @Parameter(names = arrayOf("-h", "--help"), help = true)
-    private var help: Boolean = false
+    @Parameter(
+            names = arrayOf("-h", "--help"),
+            description = "Show this help",
+            help = true)
+    var help: Boolean = false
 
     @Parameter(
             names = arrayOf("-i", "--input"),
@@ -20,7 +23,7 @@ class Arguments {
 
     @Parameter(
             names = arrayOf("-p", "--precision"),
-            description = "The polyline precision, either 5 (the default) or 6",
+            description = "The polyline precision, either 5 or 6",
             validateWith = arrayOf(PolylinePrecisionValidator::class)
     )
     var precision: Int = 5
@@ -33,10 +36,9 @@ class Arguments {
 
     @Parameter(
             names = arrayOf("-f", "--format"),
-            description = "Output format, either gpx (the default) or kml",
-            validateWith = arrayOf(OutputFormatValidator::class)
+            description = "Output format"
     )
-    var format: String = FormatUtil.Format.GPX.name
+    var format: FormatUtil.Format = FormatUtil.Format.GPX
 }
 
 class PolylinePrecisionValidator : IParameterValidator {
@@ -45,15 +47,6 @@ class PolylinePrecisionValidator : IParameterValidator {
         val precision = Integer.parseInt(value)
         if (precision !in intArrayOf(5, 6)) {
             throw ParameterException("Parameter $name should be either 5 or 6 (was: $value)")
-        }
-    }
-}
-
-class OutputFormatValidator : IParameterValidator {
-    @Throws(ParameterException::class)
-    override fun validate(name: String, value: String) {
-        if (value.toLowerCase() !in FormatUtil.Format.values().map { it.name.toLowerCase() }) {
-            throw ParameterException("Parameter $name should be either gpx or kml (was: $value)")
         }
     }
 }
