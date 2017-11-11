@@ -26,18 +26,28 @@ class Main {
                 return
             }
 
+            // Decode polyline
             val polylineStr = arguments.polyline
             val lineString = try {
                 LineString.fromPolyline(polylineStr, arguments.precision)
             } catch (t: Throwable) {
                 throw IllegalArgumentException("Could not parse the polyline", t)
             }
-            val positions = lineString.coordinates
-            val speed = Speed(Distance(30.0, DistanceUnit.KILOMETERS), Time(1, TimeUnit.HOURS))
-            val interpolatedPositions = RouteUtil.interpolate(positions, speed, 1)
-            val noisePositions = RouteUtil.addNoise(interpolatedPositions)
+            var positions = lineString.coordinates
 
-            val formatted = FormatUtil.format(noisePositions, arguments.format)
+            // Interpolate
+            val speed = Speed(Distance(arguments.speed.toDouble(), DistanceUnit.KILOMETERS), Time(1, TimeUnit.HOURS))
+            positions = RouteUtil.interpolate(positions, speed, arguments.delayBetweenPositionsSecond)
+
+            // Noise
+            if (arguments.addNoise) {
+                positions = RouteUtil.addNoise(positions)
+            }
+
+            // Format
+            val formatted = FormatUtil.format(positions, arguments.format)
+
+            // Output
             if (arguments.outputFile != null) {
                 arguments.outputFile?.writeText(formatted)
             } else {

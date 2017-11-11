@@ -39,6 +39,25 @@ class Arguments {
             description = "Output format"
     )
     var format: FormatUtil.Format = FormatUtil.Format.GPX
+
+    @Parameter(
+            names = arrayOf("-n", "--add-noise"),
+            description = "Add noise to the result"
+    )
+    var addNoise: Boolean = false
+
+    @Parameter(
+            names = arrayOf("-d", "--delay-positions"),
+            description = "Delay between each position, in seconds"
+    )
+    var delayBetweenPositionsSecond = 1
+
+    @Parameter(
+            names = arrayOf("-s", "--speed"),
+            description = "Speed, in km/h"
+    )
+    var speed = 30
+
 }
 
 class PolylinePrecisionValidator : IParameterValidator {
