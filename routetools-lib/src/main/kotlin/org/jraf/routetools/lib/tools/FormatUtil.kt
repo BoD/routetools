@@ -2,6 +2,8 @@ package org.jraf.routetools.lib.tools
 
 import com.mapbox.services.commons.models.Position
 import org.jraf.routetools.lib.model.Speed
+import java.text.SimpleDateFormat
+import java.util.Date
 
 object FormatUtil {
     enum class Format {
@@ -22,8 +24,8 @@ object FormatUtil {
         val res = StringBuilder("""<?xml version="1.0" encoding="UTF-8"?>
 <gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd" xmlns="http://www.topografix.com/GPX/1/0" creator="RouteUtil" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0">
 """)
-        for (position in positionList) {
-            res.append("<wpt lat=\"${position.latitude}\" lon=\"${position.longitude}\"/>\n")
+        for ((index, position) in positionList.withIndex()) {
+            res.append("<!-- $index --><wpt lat=\"${position.latitude}\" lon=\"${position.longitude}\"/>\n")
         }
         res.append("</gpx>")
         return res.toString()
@@ -34,8 +36,8 @@ object FormatUtil {
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
 """)
-        for (position in positionList) {
-            res.append("<Placemark><Point><coordinates>${position.longitude},${position.latitude},0</coordinates></Point></Placemark>\n")
+        for ((index, position) in positionList.withIndex()) {
+            res.append("<!-- $index --><Placemark><Point><coordinates>${position.longitude},${position.latitude},0</coordinates></Point></Placemark>\n")
         }
         res.append("""  </Document>
 </kml>""")
@@ -62,7 +64,8 @@ if {[gets ${'$'}fp line] != -1} {
 
 """)
         val bearingInfer = BearingInfer()
-        for (position in positionList) {
+        val dateStr = SimpleDateFormat("ddMMyy").format(Date())
+        for ((index, position) in positionList.withIndex()) {
             bearingInfer.add(position)
 
             val latitude = String.format("%d%.3f,%s", position.latitudeDegrees, position.latitudeMinutes, position.latitudeNorthSouth)
@@ -70,11 +73,13 @@ if {[gets ${'$'}fp line] != -1} {
             val bearing = String.format("%.1f", bearingInfer.bearing)
             val speedStr = String.format("%.1f", speed.toMetersPerSecond())
 
+            res.append("# $index  lat: $latitude  lon: $longitude  bear: $bearing  speed: $speedStr\n")
+            res.append("# geo nmea \$GPRMC,000000,A,$latitude,$longitude,$speedStr,$bearing,$dateStr,,*00\n")
             val command = "geo nmea \\\$GPRMC,[clock format [clock seconds] -format %H%M%S],A,$latitude,$longitude,$speedStr,$bearing,\$date,,*00"
-
             res.append("send \"$command\\r\"\n")
             res.append("expect OK\n")
             res.append("sleep $delayBetweenPositionsSecond\n")
+            res.append("\n")
         }
 
         res.append("\nsend \"exit\\r\"\n")
