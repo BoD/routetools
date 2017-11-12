@@ -61,10 +61,13 @@ if {[gets ${'$'}fp line] != -1} {
 }
 
 """)
+        val bearingInfer = BearingInfer()
         for (position in positionList) {
+            bearingInfer.add(position)
+
             val latitude = String.format("%d%.3f,%s", position.latitudeDegrees, position.latitudeMinutes, position.latitudeNorthSouth)
             val longitude = String.format("%d%.3f,%s", position.longitudeDegrees, position.longitudeMinutes, position.longitudeEastWest)
-            val bearing = String.format("%.1f", 15.0)
+            val bearing = String.format("%.1f", bearingInfer.bearing)
             val speedStr = String.format("%.1f", speed.toMetersPerSecond())
 
             val command = "geo nmea \\\$GPRMC,[clock format [clock seconds] -format %H%M%S],A,$latitude,$longitude,$speedStr,$bearing,\$date,,*00"
