@@ -45,7 +45,7 @@ class Main {
             }
 
             // Format
-            val formatted = FormatUtil.format(positions, arguments.format)
+            val formatted = FormatUtil.format(arguments.format, positions, speed, arguments.delayBetweenPositionsSecond)
 
             // Output
             if (arguments.outputFile != null) {
