@@ -41,10 +41,10 @@ class Arguments {
     var format: FormatUtil.Format = FormatUtil.Format.GPX
 
     @Parameter(
-            names = arrayOf("-n", "--add-noise"),
-            description = "Add noise to the result"
+            names = arrayOf("-n", "--noise"),
+            description = "Add a random distance to each point, withing the given range (in meters - 0 for no noise)"
     )
-    var addNoise: Boolean = false
+    var noiseRangeMeters: Double = 0.0
 
     @Parameter(
             names = arrayOf("-d", "--delay-positions"),

@@ -40,8 +40,8 @@ class Main {
             positions = RouteUtil.interpolate(positions, speed, arguments.delayBetweenPositionsSecond)
 
             // Noise
-            if (arguments.addNoise) {
-                positions = RouteUtil.addNoise(positions)
+            if (arguments.noiseRangeMeters != 0.0) {
+                positions = RouteUtil.addNoise(positions, arguments.noiseRangeMeters)
             }
 
             // Format

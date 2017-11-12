@@ -6,8 +6,6 @@ import com.mapbox.services.commons.models.Position
 import org.jraf.routetools.lib.model.Speed
 
 object RouteUtil {
-    private const val NOISE_RANGE = .0001
-
     fun interpolate(positions: List<Position>, speed: Speed, delayBetweenPositionsSecond: Int): List<Position> {
         val res = mutableListOf<Position>()
         val maxDistanceWithoutPointsMeters = delayBetweenPositionsSecond * speed.toMetersPerSecond()
@@ -23,11 +21,10 @@ object RouteUtil {
         return res
     }
 
-    fun addNoise(positions: List<Position>): List<Position> {
+    fun addNoise(positions: List<Position>, noiseRangeMeters: Double): List<Position> {
         val res = mutableListOf<Position>()
         for (position in positions) {
-            res += Position.fromCoordinates(position.longitude + Math.random() * NOISE_RANGE - NOISE_RANGE / 2,
-                    position.latitude + Math.random() * NOISE_RANGE - NOISE_RANGE / 2)
+            res += TurfMeasurement.destination(position, Math.random() * noiseRangeMeters, Math.random() * 360.0 - 180.0, TurfConstants.UNIT_METERS)
         }
         return res
     }
