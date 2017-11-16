@@ -1,51 +1,14 @@
-package org.jraf.routetools.lib.tools
+package org.jraf.routetools.lib.tools.formatter
 
 import com.mapbox.services.commons.models.Position
 import org.jraf.routetools.lib.model.Speed
+import org.jraf.routetools.lib.tools.BearingInfer
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-object FormatUtil {
-    enum class Format {
-        GPX,
-        KML,
-        ANDROID_EMULATOR,
-    }
-
-    fun format(format: Format, positionList: List<Position>, speed: Speed, delayBetweenPositionsSecond: Int): String {
-        return when (format) {
-            Format.GPX -> asGpx(positionList)
-            Format.KML -> asKml(positionList)
-            Format.ANDROID_EMULATOR -> asAndroidEmulatorScript(positionList, speed, delayBetweenPositionsSecond)
-        }
-    }
-
-    fun asGpx(positionList: List<Position>): String {
-        val res = StringBuilder("""<?xml version="1.0" encoding="UTF-8"?>
-<gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd" xmlns="http://www.topografix.com/GPX/1/0" creator="RouteUtil" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0">
-""")
-        for ((index, position) in positionList.withIndex()) {
-            res.append("<!-- $index --><wpt lat=\"${position.latitude}\" lon=\"${position.longitude}\"/>\n")
-        }
-        res.append("</gpx>")
-        return res.toString()
-    }
-
-    fun asKml(positionList: List<Position>): String {
-        val res = StringBuilder("""<?xml version="1.0" encoding="utf-8"?>
-<kml xmlns="http://www.opengis.net/kml/2.2">
-  <Document>
-""")
-        for ((index, position) in positionList.withIndex()) {
-            res.append("<!-- $index --><Placemark><Point><coordinates>${position.longitude},${position.latitude},0</coordinates></Point></Placemark>\n")
-        }
-        res.append("""  </Document>
-</kml>""")
-        return res.toString()
-    }
-
-    fun asAndroidEmulatorScript(positionList: List<Position>, speed: Speed, delayBetweenPositionsSecond: Int): String {
+object AndroidEmulatorFormatter : Formatter {
+    override fun format(positionList: List<Position>, speed: Speed, delayBetweenPositionsSecond: Int): String {
         val res = StringBuilder("""#!/usr/bin/expect
 
 set port [lindex ${'$'}argv 0]
@@ -94,5 +57,4 @@ if {[gets ${'$'}fp line] != -1} {
     private val Position.longitudeDegrees get() = Math.abs(longitude).toInt()
     private val Position.longitudeMinutes get() = 60 * (Math.abs(longitude) - longitudeDegrees)
     private val Position.longitudeEastWest get() = if (longitude > 0) "E" else "W"
-
 }

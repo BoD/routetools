@@ -3,7 +3,7 @@ package org.jraf.routetools.cli
 import com.beust.jcommander.IParameterValidator
 import com.beust.jcommander.Parameter
 import com.beust.jcommander.ParameterException
-import org.jraf.routetools.lib.tools.FormatUtil
+import org.jraf.routetools.lib.tools.formatter.Format
 import java.io.File
 
 
@@ -38,7 +38,7 @@ class Arguments {
             names = arrayOf("-f", "--format"),
             description = "Output format"
     )
-    var format: FormatUtil.Format = FormatUtil.Format.GPX
+    var format: Format = Format.GPX
 
     @Parameter(
             names = arrayOf("-n", "--noise"),

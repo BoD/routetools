@@ -6,7 +6,6 @@ import org.jraf.routetools.lib.model.Distance
 import org.jraf.routetools.lib.model.DistanceUnit
 import org.jraf.routetools.lib.model.Speed
 import org.jraf.routetools.lib.model.Time
-import org.jraf.routetools.lib.tools.FormatUtil
 import org.jraf.routetools.lib.tools.RouteUtil
 import java.util.concurrent.TimeUnit
 
@@ -45,7 +44,7 @@ class Main {
             }
 
             // Format
-            val formatted = FormatUtil.format(arguments.format, positions, speed, arguments.delayBetweenPositionsSecond)
+            val formatted = arguments.format.format(positions, speed, arguments.delayBetweenPositionsSecond)
 
             // Output
             if (arguments.outputFile != null) {
