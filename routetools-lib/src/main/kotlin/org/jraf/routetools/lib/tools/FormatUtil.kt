@@ -4,6 +4,7 @@ import com.mapbox.services.commons.models.Position
 import org.jraf.routetools.lib.model.Speed
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 object FormatUtil {
     enum class Format {
@@ -68,10 +69,10 @@ if {[gets ${'$'}fp line] != -1} {
         for ((index, position) in positionList.withIndex()) {
             bearingInfer.add(position)
 
-            val latitude = String.format("%d%.3f,%s", position.latitudeDegrees, position.latitudeMinutes, position.latitudeNorthSouth)
-            val longitude = String.format("%d%.3f,%s", position.longitudeDegrees, position.longitudeMinutes, position.longitudeEastWest)
-            val bearing = String.format("%.1f", bearingInfer.bearing)
-            val speedStr = String.format("%.1f", speed.toMetersPerSecond())
+            val latitude = String.format(Locale.US, "%d%.3f,%s", position.latitudeDegrees, position.latitudeMinutes, position.latitudeNorthSouth)
+            val longitude = String.format(Locale.US, "%d%.3f,%s", position.longitudeDegrees, position.longitudeMinutes, position.longitudeEastWest)
+            val bearing = String.format(Locale.US, "%.1f", bearingInfer.bearing)
+            val speedStr = String.format(Locale.US, "%.1f", speed.toMetersPerSecond())
 
             res.append("# $index  lat: $latitude  lon: $longitude  bear: $bearing  speed: $speedStr\n")
             res.append("# geo nmea \$GPRMC,000000,A,$latitude,$longitude,$speedStr,$bearing,$dateStr,,*00\n")
