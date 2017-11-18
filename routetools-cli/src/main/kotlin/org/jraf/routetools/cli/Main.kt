@@ -2,6 +2,10 @@ package org.jraf.routetools.cli
 
 import com.beust.jcommander.JCommander
 import com.mapbox.services.commons.geojson.LineString
+import com.mapbox.services.commons.models.Position
+import io.jenetics.jpx.GPX
+import io.jenetics.jpx.Track
+import io.jenetics.jpx.TrackSegment
 import org.jraf.routetools.lib.model.Distance
 import org.jraf.routetools.lib.model.DistanceUnit
 import org.jraf.routetools.lib.model.Speed
@@ -25,14 +29,34 @@ class Main {
                 return
             }
 
-            // Decode polyline
-            val polylineStr = arguments.polyline
-            val lineString = try {
-                LineString.fromPolyline(polylineStr, arguments.precision)
-            } catch (t: Throwable) {
-                throw IllegalArgumentException("Could not parse the polyline", t)
+            var positions: List<Position> = emptyList()
+
+            if (arguments.inputPolyline == null && arguments.inputGpxFile == null) {
+                System.err.println("Either a polyline or a gpx file must be provided as the input")
+                System.exit(-1)
+                return
             }
-            var positions = lineString.coordinates
+
+            // Input
+            if (arguments.inputPolyline != null) {
+                // Polyline
+                val polylineStr = arguments.inputPolyline
+                val lineString = try {
+                    LineString.fromPolyline(polylineStr, arguments.precision)
+                } catch (t: Throwable) {
+                    throw IllegalArgumentException("Could not parse the inputPolyline", t)
+                }
+                positions = lineString.coordinates
+            } else arguments.inputGpxFile?.let { inputGpxFile ->
+                // Gpx file
+                val mutablePositions = mutableListOf<Position>()
+                GPX.read(inputGpxFile.inputStream()).tracks()
+                        .limit(1)
+                        .flatMap(Track::segments)
+                        .flatMap(TrackSegment::points)
+                        .forEach { mutablePositions.add(Position.fromCoordinates(it.longitude.toDegrees(), it.latitude.toDegrees())) }
+                positions = mutablePositions
+            }
 
             // Interpolate
             val speed = Speed(Distance(arguments.speed.toDouble(), DistanceUnit.KILOMETERS), Time(1, TimeUnit.HOURS))

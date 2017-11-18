@@ -11,22 +11,29 @@ class Arguments {
     @Parameter(
             names = arrayOf("-h", "--help"),
             description = "Show this help",
-            help = true)
+            help = true
+    )
     var help: Boolean = false
 
     @Parameter(
-            names = arrayOf("-i", "--input"),
-            description = "Input, as a polyline",
-            required = true
+            names = arrayOf("-ip", "--input-polyline"),
+            description = "Input, as a polyline"
     )
-    var polyline: String? = null
+    var inputPolyline: String? = null
 
     @Parameter(
-            names = arrayOf("-p", "--precision"),
-            description = "The polyline precision, either 5 or 6",
+            names = arrayOf("-pp", "--input-polyline-precision"),
+            description = "The input polyline precision, either 5 or 6",
             validateWith = arrayOf(PolylinePrecisionValidator::class)
     )
     var precision: Int = 5
+
+    @Parameter(
+            names = arrayOf("-ig", "--input-gpx"),
+            description = "Input, as a gpx file",
+            validateWith = arrayOf(FileExistsValidator::class)
+    )
+    var inputGpxFile: File? = null
 
     @Parameter(
             names = arrayOf("-o", "--output"),
@@ -66,6 +73,15 @@ class PolylinePrecisionValidator : IParameterValidator {
         val precision = Integer.parseInt(value)
         if (precision !in intArrayOf(5, 6)) {
             throw ParameterException("Parameter $name should be either 5 or 6 (was: $value)")
+        }
+    }
+}
+
+class FileExistsValidator : IParameterValidator {
+    @Throws(ParameterException::class)
+    override fun validate(name: String, value: String) {
+        if (!File(value).exists()) {
+            throw ParameterException("Could not find file $value")
         }
     }
 }
