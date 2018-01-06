@@ -2,7 +2,7 @@ buildscript {
     // Versions used across modules
     ext.versions = [:]
     ext.versions.with {
-        kotlin = '1.1.60'
+        kotlin = '1.2.10'
         junit = '4.12'
         mapbox = '2.2.6'
         jcommander = '1.71'

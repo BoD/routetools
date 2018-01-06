@@ -23,11 +23,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jraf.routetools.lib.tools.formatter
+package org.jraf.routetools.lib.tools.bearing
 
+import com.mapbox.services.api.utils.turf.TurfMeasurement
 import com.mapbox.services.commons.models.Position
-import org.jraf.routetools.lib.model.Speed
 
-interface Formatter {
-    fun format(positionList: List<Position>, speed: Speed, delayBetweenPositionsSecond: Int): String
+object Bearing {
+   fun bearing(position0: Position, position1: Position): Double {
+       val res = TurfMeasurement.bearing(position0, position1)
+       return positiveAngle(res)
+   }
+
+   // Convert -180..180 to 0..360
+   fun positiveAngle(angle: Double) = if (angle < 0) angle + 360.0 else angle
+
+   fun getMeanAngle(vararg anglesDeg: Double): Double {
+       var x = 0.0
+       var y = 0.0
+
+       for (angleD in anglesDeg) {
+           val angleR = Math.toRadians(angleD)
+           x += Math.cos(angleR)
+           y += Math.sin(angleR)
+       }
+       val avgR = Math.atan2(y / anglesDeg.size, x / anglesDeg.size)
+       return Math.toDegrees(avgR)
+   }
 }

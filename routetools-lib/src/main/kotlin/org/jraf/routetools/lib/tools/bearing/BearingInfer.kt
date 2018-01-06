@@ -23,11 +23,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.jraf.routetools.lib.tools.formatter
+package org.jraf.routetools.lib.tools.bearing
 
 import com.mapbox.services.commons.models.Position
-import org.jraf.routetools.lib.model.Speed
 
-interface Formatter {
-    fun format(positionList: List<Position>, speed: Speed, delayBetweenPositionsSecond: Int): String
+class BearingInfer(private val positionCount: Int = 4) {
+    private val positions = mutableListOf<Position>()
+
+    val bearing: Double
+        get() {
+            if (positions.size < 2) return 0.0
+            val bearings = mutableListOf<Double>()
+            for (i in 0 until positions.size - 1) {
+                val position0 = positions[i]
+                val position1 = positions[i + 1]
+                bearings.add(Bearing.bearing(position0, position1))
+            }
+            return Bearing.positiveAngle(Bearing.getMeanAngle(*bearings.toDoubleArray()))
+        }
+
+    fun add(position: Position) {
+        positions += position
+        if (positions.size > positionCount) positions.removeAt(0)
+    }
 }
