@@ -34,62 +34,67 @@ import java.io.File
 
 class Arguments {
     @Parameter(
-            names = arrayOf("-h", "--help"),
+            names = ["-h", "--help"],
             description = "Show this help",
             help = true
     )
     var help: Boolean = false
 
     @Parameter(
-            names = arrayOf("-ip", "--input-polyline"),
+            names = ["-ip", "--input-polyline"],
             description = "Input, as a polyline"
     )
     var inputPolyline: String? = null
 
     @Parameter(
-            names = arrayOf("-pp", "--input-polyline-precision"),
+            names = ["-pp", "--input-polyline-precision"],
             description = "The input polyline precision, either 5 or 6",
-            validateWith = arrayOf(PolylinePrecisionValidator::class)
+            validateWith = [(PolylinePrecisionValidator::class)]
     )
     var precision: Int = 5
 
     @Parameter(
-            names = arrayOf("-ig", "--input-gpx"),
+            names = ["-ig", "--input-gpx"],
             description = "Input, as a gpx file",
-            validateWith = arrayOf(FileExistsValidator::class)
+            validateWith = [(FileExistsValidator::class)]
     )
     var inputGpxFile: File? = null
 
     @Parameter(
-            names = arrayOf("-o", "--output"),
+            names = ["-o", "--output"],
             description = "Output file.  If not specified, the output is stdout"
     )
     var outputFile: File? = null
 
     @Parameter(
-            names = arrayOf("-f", "--format"),
+            names = ["-f", "--format"],
             description = "Output format"
     )
     var format: Format = Format.GPX
 
     @Parameter(
-            names = arrayOf("-n", "--noise"),
+            names = ["-n", "--noise"],
             description = "Add a random distance to each point, withing the given range (in meters - 0 for no noise)"
     )
     var noiseRangeMeters: Double = 0.0
 
     @Parameter(
-            names = arrayOf("-d", "--delay-positions"),
+            names = ["-d", "--delay-positions"],
             description = "Delay between each position, in seconds"
     )
     var delayBetweenPositionsSecond = 1
 
     @Parameter(
-            names = arrayOf("-s", "--speed"),
+            names = ["-s", "--speed"],
             description = "Speed, in km/h"
     )
     var speed = 30
 
+    @Parameter(
+            names = ["-ec", "--exclude-close-positions"],
+            description = "Exclude positions that are closer than the given value (in meters - 0 for no exclusion)"
+    )
+    var excludeClosePositionsMeters: Double = 1.0
 }
 
 class PolylinePrecisionValidator : IParameterValidator {

@@ -31,7 +31,8 @@ import org.jraf.routetools.lib.model.Speed
 enum class Format(private val formatter: Formatter) : Formatter {
     GPX(GpxFormatter),
     KML(KmlFormatter),
-    ANDROID_EMULATOR(AndroidEmulatorFormatter), ;
+    ANDROID_EMULATOR(AndroidEmulatorFormatter),
+    HTML(HtmlFormatter), ;
 
     override fun format(positionList: List<Position>, speed: Speed, delayBetweenPositionsSecond: Int) = formatter.format(positionList, speed, delayBetweenPositionsSecond)
 }

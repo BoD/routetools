@@ -92,6 +92,11 @@ class Main {
                 positions = RouteUtil.addNoise(positions, arguments.noiseRangeMeters)
             }
 
+            // Exclude close positions
+            if (arguments.excludeClosePositionsMeters != 0.0) {
+                positions = RouteUtil.excludeClosePositions(positions, Distance(arguments.excludeClosePositionsMeters, DistanceUnit.METERS))
+            }
+
             // Format
             val formatted = arguments.format.format(positions, speed, arguments.delayBetweenPositionsSecond)
 

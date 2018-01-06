@@ -28,6 +28,7 @@ package org.jraf.routetools.lib.tools
 import com.mapbox.services.api.utils.turf.TurfConstants
 import com.mapbox.services.api.utils.turf.TurfMeasurement
 import com.mapbox.services.commons.models.Position
+import org.jraf.routetools.lib.model.Distance
 import org.jraf.routetools.lib.model.Speed
 
 object RouteUtil {
@@ -40,8 +41,34 @@ object RouteUtil {
                 val nextPosition = positions[index + 1]
                 val distanceMeters = TurfMeasurement.distance(position, nextPosition, TurfConstants.UNIT_METERS)
                 val neededPoints = (distanceMeters / maxDistanceWithoutPointsMeters).toInt()
-                if (neededPoints > 0) res += divide(position, nextPosition, neededPoints)
+                if (neededPoints > 0) {
+                    res += divide(position, nextPosition, neededPoints)
+                }
             }
+        }
+        return res
+    }
+
+    private fun divide(from: Position, to: Position, numberOfPositions: Int): List<Position> {
+        val heading = TurfMeasurement.bearing(from, to)
+        val res = mutableListOf<Position>()
+
+        var point: Position = from
+        for (i in numberOfPositions downTo 1) {
+            val dist = TurfMeasurement.distance(point, to, TurfConstants.UNIT_METERS)
+            point = TurfMeasurement.destination(point, dist / (i + 1), heading, TurfConstants.UNIT_METERS)
+            res += point
+        }
+        return res
+    }
+
+    fun excludeClosePositions(positions: List<Position>, minDistance: Distance): List<Position> {
+        val res = mutableListOf(positions[0])
+        for (index in 1..positions.lastIndex) {
+            val position = positions[index]
+            val lastPosition = res.last()
+            val distanceMeters = TurfMeasurement.distance(lastPosition, position, TurfConstants.UNIT_METERS)
+            if (distanceMeters >= minDistance.toMeters()) res += position
         }
         return res
     }
@@ -50,20 +77,6 @@ object RouteUtil {
         val res = mutableListOf<Position>()
         for (position in positions) {
             res += TurfMeasurement.destination(position, Math.random() * noiseRangeMeters, Math.random() * 360.0 - 180.0, TurfConstants.UNIT_METERS)
-        }
-        return res
-    }
-
-
-    private fun divide(from: Position, to: Position, numberOfPositions: Int): List<Position> {
-        val heading = TurfMeasurement.bearing(from, to)
-        val res = mutableListOf<Position>()
-
-        var point: Position = from
-        for (i in numberOfPositions downTo 0) {
-            val dist = TurfMeasurement.distance(point, to, TurfConstants.UNIT_METERS)
-            point = TurfMeasurement.destination(point, dist / (i + 1), heading, TurfConstants.UNIT_METERS)
-            res += point
         }
         return res
     }
