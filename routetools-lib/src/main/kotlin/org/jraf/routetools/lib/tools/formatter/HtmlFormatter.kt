@@ -78,9 +78,12 @@ function drawArrowAngle(ctx, angleDeg) {
 
 var points = [
 """)
+        val positionAheadIndex = BearingInfer.DEFAULT_POSITION_COUNT / 2
         val bearingInfer = BearingInfer()
-        for (position in positionList) {
-            bearingInfer.add(position)
+        for ((index, position) in positionList.withIndex()) {
+            if (index + positionAheadIndex < positionList.lastIndex) {
+                bearingInfer.add(positionList[index + positionAheadIndex])
+            }
             res.append("{lat: ${position.latitude}, lng: ${position.longitude}, bear: ${bearingInfer.bearing}},\n")
         }
 
@@ -94,11 +97,18 @@ function initMap() {
 
   var canvas = document.getElementById("c");
   var ctx = canvas.getContext("2d");
-  ctx.strokeStyle = "#FF0000";
 
   for (var i = 0; i < points.length; i++) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.strokeStyle = "#FFFFFF";
+    ctx.lineWidth = 6;
     drawArrowAngle(ctx, 90 - points[i].bear);
+
+    ctx.strokeStyle = "#FF0000";
+    ctx.lineWidth = 1;
+    drawArrowAngle(ctx, 90 - points[i].bear);
+
     var imageUrl = canvas.toDataURL("image/png");
     var image = {
       url: imageUrl,
@@ -123,6 +133,4 @@ function initMap() {
 </html>""")
         return res.toString()
     }
-
-
 }

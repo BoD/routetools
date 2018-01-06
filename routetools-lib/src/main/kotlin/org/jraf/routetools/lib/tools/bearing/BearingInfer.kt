@@ -27,7 +27,7 @@ package org.jraf.routetools.lib.tools.bearing
 
 import com.mapbox.services.commons.models.Position
 
-class BearingInfer(private val positionCount: Int = 4) {
+class BearingInfer(private val positionCount: Int = DEFAULT_POSITION_COUNT) {
     private val positions = mutableListOf<Position>()
 
     val bearing: Double
@@ -45,5 +45,9 @@ class BearingInfer(private val positionCount: Int = 4) {
     fun add(position: Position) {
         positions += position
         if (positions.size > positionCount) positions.removeAt(0)
+    }
+
+    companion object {
+        const val DEFAULT_POSITION_COUNT = 5
     }
 }

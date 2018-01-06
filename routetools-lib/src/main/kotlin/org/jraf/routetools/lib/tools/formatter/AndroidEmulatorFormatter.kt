@@ -65,9 +65,12 @@ if {[gets ${'$'}fp line] != -1} {
 }
 
 """)
+        val positionAheadIndex = BearingInfer.DEFAULT_POSITION_COUNT / 2
         val bearingInfer = BearingInfer()
         for ((index, position) in positionList.withIndex()) {
-            bearingInfer.add(position)
+            if (index + positionAheadIndex < positionList.lastIndex) {
+                bearingInfer.add(positionList[index + positionAheadIndex])
+            }
 
             val latitude = String.format(Locale.US, "%02d%.3f,%s", position.latitudeDegrees, position.latitudeMinutes, position.latitudeNorthSouth)
             val longitude = String.format(Locale.US, "%03d%.3f,%s", position.longitudeDegrees, position.longitudeMinutes, position.longitudeEastWest)

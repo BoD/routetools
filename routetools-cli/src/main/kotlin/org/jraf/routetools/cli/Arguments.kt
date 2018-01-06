@@ -94,7 +94,7 @@ class Arguments {
             names = ["-ec", "--exclude-close-positions"],
             description = "Exclude positions that are closer than the given value (in meters - 0 for no exclusion)"
     )
-    var excludeClosePositionsMeters: Double = 1.0
+    var excludeClosePositionsMeters: Double = 2.0
 }
 
 class PolylinePrecisionValidator : IParameterValidator {
